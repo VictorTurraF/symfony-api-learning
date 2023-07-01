@@ -1,0 +1,35 @@
+###############################################################################
+#                          Generated on phpdocker.io                          #
+###############################################################################
+version: '3.1'
+services:
+    mysql:
+        image: 'mysql:8.0'
+        working_dir: /app
+        volumes:
+            - '.:/app'
+        environment:
+            - MYSQL_ROOT_PASSWORD=admin
+            - MYSQL_DATABASE=todos_db
+            - MYSQL_USER=victor
+            - MYSQL_PASSWORD=victor@123
+        ports:
+            - '8002:3306'
+
+    webserver:
+        image: 'nginx:alpine'
+        working_dir: /app
+        volumes:
+            - '.:/app'
+            - './phpdocker/nginx/nginx.conf:/etc/nginx/conf.d/default.conf'
+        ports:
+            - '8000:80'
+
+    app:
+        build: phpdocker/php-fpm
+        working_dir: /app
+        volumes:
+            - '.:/app'
+            - '/app/phpdocker'
+            - '/app/docker-compose.yml:/ro'
+            - './phpdocker/php-fpm/php-ini-overrides.ini:/etc/php/8.2/fpm/conf.d/99-overrides.ini'
